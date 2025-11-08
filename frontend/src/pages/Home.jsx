@@ -5,6 +5,7 @@ import { getCharacters } from '../services/api';
 import CharacterCard from '../components/CharacterCard';
 import SearchBar from '../components/SearchBar';
 import FilterBar from '../components/FilterBar';
+import EduVerseAssistant from '../components/EduVerseAssistant';
 
 const DEFAULT_FILTERS = {
   category: 'all',
@@ -567,6 +568,9 @@ function Home() {
           </div>
         </div>
       )}
+
+      {/* EduVerse Assistant Chatbot */}
+      <EduVerseAssistant />
     </div>
   );
 }

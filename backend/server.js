@@ -5,6 +5,7 @@ import express from 'express';
 import cors from 'cors';
 import chatRoutes from './routes/chat.js';
 import characterRoutes from './routes/characters.js';
+import assistantRoutes from './routes/assistant.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,6 +24,7 @@ app.use('/audio', express.static('audio'));
 // Routes
 app.use('/api/chat', chatRoutes);
 app.use('/api/characters', characterRoutes);
+app.use('/api/assistant', assistantRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

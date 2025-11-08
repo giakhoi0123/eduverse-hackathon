@@ -79,3 +79,24 @@ export async function generateResponse(userMessage, characterId, history = []) {
 export function isConfigured() {
   return !!process.env.OPENAI_API_KEY;
 }
+
+/**
+ * Simple chat completion for assistant (no character context)
+ * @param {Array} messages - Array of {role, content} objects
+ * @returns {string} AI response text
+ */
+export async function createChatCompletion(messages) {
+  try {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: messages,
+      temperature: 0.7,
+      max_tokens: 300
+    });
+
+    return completion.choices[0].message.content;
+  } catch (error) {
+    console.error('OpenAI Chat Completion Error:', error);
+    throw new Error(`Failed to generate completion: ${error.message}`);
+  }
+}
