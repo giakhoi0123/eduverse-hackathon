@@ -1,9 +1,19 @@
 import OpenAI from 'openai';
 import { getCharacterById } from './characters.js';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+// Initialize OpenAI client
+let openai;
+try {
+  if (!process.env.OPENAI_API_KEY) {
+    console.error('⚠️  WARNING: OPENAI_API_KEY not found in environment variables');
+    console.error('Please check your .env file');
+  }
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY || 'dummy-key-for-testing'
+  });
+} catch (error) {
+  console.error('Failed to initialize OpenAI client:', error);
+}
 
 /**
  * Generate AI response based on character and conversation history

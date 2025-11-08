@@ -1,157 +1,224 @@
-/**
- * Historical Vietnamese Characters Database
- */
+import {
+  CHARACTER_DEFINITIONS,
+  CATEGORY_TEMPLATES,
+  COLOR_BY_CATEGORY,
+  AVATARS_BY_CATEGORY
+} from './characters-data.js';
 
-const CHARACTERS = [
-  {
-    id: 'tran-hung-dao',
-    name: 'Trần Hưng Đạo',
-    title: 'Đại Tướng Quân',
-    era: 'Thế kỷ 13',
-    description: 'Vị tướng tài ba, anh hùng dân tộc đã ba lần đánh bại quân Mông Cổ, bảo vệ giang sơn Đại Việt.',
-    avatar: '/avatars/tran-hung-dao.png',
-    systemPrompt: `Bạn là Trần Hưng Đạo, vị đại tướng quân kiệt xuất của dân tộc Việt Nam trong thế kỷ 13.
+const CATEGORY_LABELS = {
+  military: 'Tướng lĩnh',
+  leader: 'Lãnh đạo',
+  scholar: 'Học giả',
+  revolutionary: 'Cách mạng'
+};
 
-NHÂN CÁCH:
-- Dũng cảm, trí dũng song toàn
-- Yêu nước, tận tụy với giang sơn đất nước
-- Khiêm tốn nhưng kiên định
-- Trọng nghĩa, yêu dân như con
+const DEFAULT_TRAITS = {
+  traits: [
+    'Giữ gìn lòng yêu nước và trách nhiệm với cộng đồng',
+    'Khiêm nhường nhưng không ngại bảo vệ lẽ phải'
+  ],
+  speech: [
+    'Ngôn từ trang trọng, khích lệ tinh thần học hỏi',
+    'Nhắc đến bài học lịch sử gắn với đời sống hiện tại'
+  ],
+  knowledge: [
+    'Lịch sử và văn hóa Việt Nam',
+    'Giữ gìn bản sắc dân tộc trong thời đại mới'
+  ]
+};
 
-CÁCH NÓI CHUYỆN:
-- Dùng văn phong trang trọng, lịch sự
-- Thường trích dẫn binh pháp, triết lý
-- Khuyên nhủ người trẻ học tập, rèn luyện
-- Nhấn mạnh tinh thần yêu nước, đoàn kết
+function generateAvatar(category, index) {
+  const options = AVATARS_BY_CATEGORY[category] || ['⭐'];
+  return options[index % options.length];
+}
 
-KIẾN THỨC:
-- Binh pháp và chiến thuật
-- Lịch sử chống ngoại xâm
-- Triết lý làm người, làm tướng
-- Văn hóa, truyền thống Việt Nam
+function normalise(text) {
+  return text
+    ? text
+        .toString()
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '')
+        .toLowerCase()
+        .replace(/đ/g, 'd')
+        .trim()
+    : '';
+}
 
-Hãy trả lời như chính Trần Hưng Đạo đang trò chuyện với học trò, người hậu sinh của mình. Sử dụng tiếng Việt trang trọng nhưng dễ hiểu. Luôn khuyến khích, truyền cảm hứng yêu nước và học tập.`,
-    color: '#DC2626' // Red
-  },
-  {
-    id: 'hai-ba-trung',
-    name: 'Hai Bà Trưng',
-    title: 'Nữ Tướng Quân',
-    era: 'Thế kỷ 1',
-    description: 'Hai người phụ nữ anh hùng đã lãnh đạo cuộc khởi nghĩa chống Bắc thuộc, khôi phục độc lập cho dân tộc.',
-    avatar: '/avatars/hai-ba-trung.png',
-    systemPrompt: `Bạn là Trưng Trắc, cùng em gái Trưng Nhị - Hai Bà Trưng, những nữ tướng quân anh hùng của Việt Nam.
+function buildSystemPrompt(character) {
+  const template = CATEGORY_TEMPLATES[character.category] || DEFAULT_TRAITS;
+  const traitLines = (template.traits || DEFAULT_TRAITS.traits)
+    .map(line => `- ${line}`)
+    .join('\n');
+  const speechLines = (template.speech || DEFAULT_TRAITS.speech)
+    .map(line => `- ${line}`)
+    .join('\n');
+  const knowledgeLines = (template.knowledge || DEFAULT_TRAITS.knowledge)
+    .map(line => `- ${line}`)
+    .join('\n');
+  const highlightLines = (character.highlights && character.highlights.length
+    ? character.highlights
+    : ['Lan tỏa niềm tự hào học lịch sử Việt Nam'])
+    .map(line => `- ${line}`)
+    .join('\n');
 
-NHÂN CÁCH:
-- Dũng cảm, bất khuất
-- Yêu nước, yêu dân
-- Mạnh mẽ nhưng nhân từ
-- Quyết tâm giải phóng dân tộc
+  const identity = [character.name, character.title]
+    .filter(Boolean)
+    .join(', ');
 
-CÁCH NÓI CHUYỆN:
-- Văn phong uy nghiêm nhưng ấm áp
-- Khuyến khích tinh thần tự hào dân tộc
-- Nhấn mạnh vai trò phụ nữ trong xã hội
-- Truyền cảm hứng về ý chí kiên cường
+  const timeline = [character.era, character.dynasty]
+    .filter(Boolean)
+    .join(' – ');
 
-KIẾN THỨC:
-- Lịch sử chống Bắc thuộc
-- Văn hóa dân tộc Việt
-- Vai trò phụ nữ trong lịch sử
-- Tinh thần yêu nước, tự hào dân tộc
-
-Hãy trả lời như chính Trưng Trắc đang chia sẻ với thế hệ trẻ về lịch sử, văn hóa và tinh thần yêu nước. Sử dụng tiếng Việt trang trọng, truyền cảm hứng về sức mạnh của ý chí và lòng yêu nước.`,
-    color: '#7C3AED' // Purple
-  },
-  {
-    id: 'nguyen-trai',
-    name: 'Nguyễn Trãi',
-    title: 'Danh Nho, Chiến Lược Gia',
-    era: 'Thế kỷ 15',
-    description: 'Nhà thơ, chiến lược gia xuất sắc, tác giả bài "Bình Ngô Đại Cáo" bất hủ.',
-    avatar: '/avatars/nguyen-trai.png',
-    systemPrompt: `Bạn là Nguyễn Trãi, danh nho, nhà thơ và chiến lược gia kiệt xuất của Đại Việt.
-
-NHÂN CÁCH:
-- Thông thái, uyên bác
-- Trung với nước, hiếu với dân
-- Văn võ song toàn
-- Khiêm nhường, nhân ái
-
-CÁCH NÓI CHUYỆN:
-- Sử dụng văn phong Hán Việt thanh lịch
-- Thường trích dẫn thơ văn, triết lý
-- Khuyên dạy bằng ẩn dụ, câu chuyện
-- Nhấn mạnh đạo đức, học vấn
-
-KIẾN THỨC:
-- Văn học, thơ ca Việt Nam
-- Chiến lược quân sự
-- Lịch sử Lam Sơn khởi nghĩa
-- Triết học Nho giáo
-- Ngoại giao và chính trị
-
-Hãy trả lời như chính Nguyễn Trãi đang dạy dỗ học trò. Sử dụng tiếng Việt uyên thâm nhưng dễ hiểu, thường xuyên trích dẫn thơ văn để minh họa. Truyền đạt giá trị nhân văn, đạo đức và trí tuệ.`,
-    color: '#059669' // Green
-  },
-  {
-    id: 'ly-thuong-kiet',
-    name: 'Lý Thường Kiệt',
-    title: 'Thái Úy, Quốc Công',
-    era: 'Thế kỷ 11',
-    description: 'Vị tướng tài ba, tác giả bài thơ "Nam Quốc Sơn Hà" - bản tuyên ngôn độc lập đầu tiên.',
-    avatar: '/avatars/ly-thuong-kiet.png',
-    systemPrompt: `Bạn là Lý Thường Kiệt, vị thái úy quốc công oai hùng của nhà Lý.
+  return `Bạn là ${identity}${timeline ? ` sống vào ${timeline}` : ''}.
 
 NHÂN CÁCH:
-- Dũng mãnh, quyết đoán
-- Trung thành, tận tuỵ
-- Có tầm nhìn chiến lược
-- Yêu nước, tự hào dân tộc
+${traitLines}
 
 CÁCH NÓI CHUYỆN:
-- Văn phong hào hùng, mạnh mẽ
-- Thường nhắc đến khí phách "Nam Quốc Sơn Hà"
-- Khuyến khích tinh thần tự cường
-- Nhấn mạnh chủ quyền, độc lập
+${speechLines}
 
-KIẾN THỨC:
-- Lịch sử nhà Lý
-- Chiến thuật quân sự
-- Bài thơ "Nam Quốc Sơn Hà"
-- Tinh thần tự chủ, độc lập
+KIẾN THỨC CHUYÊN SÂU:
+${knowledgeLines}
 
-Hãy trả lời như chính Lý Thường Kiệt đang chia sẻ với thế hệ sau về lịch sử, tinh thần dân tộc. Sử dụng tiếng Việt hào hùng, truyền cảm hứng về lòng tự hào và ý chí bảo vệ Tổ quốc.`,
-    color: '#2563EB' // Blue
-  }
-];
+THÀNH TỰU NỔI BẬT:
+${highlightLines}
 
-/**
- * Get all characters
- * @returns {Array} List of all characters
- */
+Trả lời bằng tiếng Việt trang trọng, gợi mở kiến thức, truyền cảm hứng yêu lịch sử.`;
+}
+
+function createSearchIndex(character) {
+  const tokens = [
+    character.name,
+    character.title,
+    character.description,
+    character.era,
+    character.dynasty,
+    CATEGORY_LABELS[character.category],
+    character.category,
+    character.previewQuote,
+    ...(character.highlights || [])
+  ];
+
+  return tokens.map(normalise).filter(Boolean).join(' ');
+}
+
+function enrichCharacter(definition, index) {
+  const category = definition.category || 'leader';
+  const color = definition.color || COLOR_BY_CATEGORY[category] || '#2563eb';
+
+  const enriched = {
+    ...definition,
+    avatar: definition.avatar || generateAvatar(category, index),
+    color,
+    systemPrompt: definition.systemPrompt || buildSystemPrompt(definition),
+    voicePreview: definition.voicePreview ?? true,
+    searchIndex: createSearchIndex(definition)
+  };
+
+  delete enriched.refId;
+
+  return enriched;
+}
+
+const CHARACTERS = CHARACTER_DEFINITIONS.map(enrichCharacter);
+
 export function getCharacters() {
   return CHARACTERS;
 }
 
-/**
- * Get character by ID
- * @param {string} id - Character ID
- * @returns {Object|null} Character object or null if not found
- */
 export function getCharacterById(id) {
   return CHARACTERS.find(char => char.id === id) || null;
 }
 
-/**
- * Search characters by name or description
- * @param {string} query - Search query
- * @returns {Array} Matching characters
- */
 export function searchCharacters(query) {
-  const lowerQuery = query.toLowerCase();
-  return CHARACTERS.filter(char => 
-    char.name.toLowerCase().includes(lowerQuery) ||
-    char.description.toLowerCase().includes(lowerQuery)
-  );
+  const normalisedQuery = normalise(query);
+  if (!normalisedQuery) return CHARACTERS;
+  return CHARACTERS.filter(char => char.searchIndex.includes(normalisedQuery));
+}
+
+export function filterByCategory(category) {
+  if (!category || category === 'all') return CHARACTERS;
+  return CHARACTERS.filter(char => char.category === category);
+}
+
+export function filterByGender(gender) {
+  if (!gender || gender === 'all') return CHARACTERS;
+  return CHARACTERS.filter(char => char.gender === gender);
+}
+
+export function filterByDynasty(dynasty) {
+  if (!dynasty || dynasty === 'all') return CHARACTERS;
+  const normalisedDynasty = normalise(dynasty);
+  return CHARACTERS.filter(char => normalise(char.dynasty) === normalisedDynasty);
+}
+
+export function filterCharacters(filters = {}) {
+  let results = CHARACTERS;
+
+  if (filters.search) {
+    const normalisedQuery = normalise(filters.search);
+    results = results.filter(char => char.searchIndex.includes(normalisedQuery));
+  }
+
+  if (filters.category && filters.category !== 'all') {
+    results = results.filter(char => char.category === filters.category);
+  }
+
+  if (filters.gender && filters.gender !== 'all') {
+    results = results.filter(char => char.gender === filters.gender);
+  }
+
+  if (filters.dynasty && filters.dynasty !== 'all') {
+    const normalisedDynasty = normalise(filters.dynasty);
+    results = results.filter(char => normalise(char.dynasty) === normalisedDynasty);
+  }
+
+  return results;
+}
+
+export function getFilterOptions() {
+  const categories = new Map();
+  const dynasties = new Map();
+  const genders = new Map();
+
+  CHARACTERS.forEach(char => {
+    if (!categories.has(char.category)) {
+      categories.set(char.category, 0);
+    }
+    categories.set(char.category, categories.get(char.category) + 1);
+
+    if (char.dynasty) {
+      const key = char.dynasty;
+      if (!dynasties.has(key)) {
+        dynasties.set(key, 0);
+      }
+      dynasties.set(key, dynasties.get(key) + 1);
+    }
+
+    if (char.gender) {
+      if (!genders.has(char.gender)) {
+        genders.set(char.gender, 0);
+      }
+      genders.set(char.gender, genders.get(char.gender) + 1);
+    }
+  });
+
+  return {
+    categories: Array.from(categories.entries()).map(([value, count]) => ({
+      value,
+      label: `${CATEGORY_LABELS[value] || value} (${count})`
+    })),
+    dynasties: Array.from(dynasties.entries()).map(([value, count]) => ({
+      value,
+      label: `${value} (${count})`
+    })),
+    genders: Array.from(genders.entries()).map(([value, count]) => ({
+      value,
+      label: value === 'male' ? `Nam (${count})` : `Nữ (${count})`
+    }))
+  };
+}
+
+export function getCategoryLabel(category) {
+  return CATEGORY_LABELS[category] || category;
 }

@@ -44,6 +44,18 @@
   .pulse-slow {
     animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-in;
+  }
 }
 
 @keyframes fadeIn {
@@ -63,6 +75,34 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+/* Responsive improvements for mobile */
+@media (max-width: 768px) {
+  .card {
+    @apply p-4;
+  }
+
+  .btn {
+    @apply px-3 py-2 text-sm;
+  }
+
+  .gradient-text {
+    @apply text-2xl;
   }
 }
 

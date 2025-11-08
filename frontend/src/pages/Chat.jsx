@@ -124,30 +124,30 @@ function Chat() {
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center space-x-4 shadow-sm">
+      <header className="bg-white border-b border-gray-200 px-3 sm:px-4 py-3 sm:py-4 flex items-center space-x-2 sm:space-x-4 shadow-sm">
         <button
           onClick={() => navigate('/')}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
         
         <Avatar character={character} size="md" />
         
-        <div className="flex-1">
-          <h2 className="font-bold text-lg gradient-text">{character.name}</h2>
-          <p className="text-sm text-gray-600">{character.title} • {character.era}</p>
+        <div className="flex-1 min-w-0">
+          <h2 className="font-bold text-base sm:text-lg gradient-text truncate">{character.name}</h2>
+          <p className="text-xs sm:text-sm text-gray-600 truncate">{character.title} • {character.era}</p>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           {playingAudio && (
-            <div className="flex items-center space-x-2 text-primary bg-blue-50 px-3 py-1.5 rounded-full">
+            <div className="hidden sm:flex items-center space-x-2 text-primary bg-blue-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
               <div className="flex space-x-0.5">
-                <div className="w-1 h-4 bg-primary rounded-full animate-pulse"></div>
-                <div className="w-1 h-4 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-1 h-4 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-1 h-3 sm:h-4 bg-primary rounded-full animate-pulse"></div>
+                <div className="w-1 h-3 sm:h-4 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-1 h-3 sm:h-4 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
               </div>
-              <span className="text-sm font-medium">Đang phát</span>
+              <span className="text-xs sm:text-sm font-medium hidden sm:inline">Đang phát</span>
             </div>
           )}
           
@@ -160,28 +160,28 @@ function Chat() {
               }]);
               setConversationId(`conv_${Date.now()}_${characterId}`);
             }}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors group"
+            className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors group"
             title="Cuộc trò chuyện mới"
           >
-            <RefreshCw className="w-5 h-5 text-gray-600 group-hover:text-primary group-hover:rotate-180 transition-all duration-300" />
+            <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 group-hover:text-primary group-hover:rotate-180 transition-all duration-300" />
           </button>
         </div>
       </header>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6 bg-gradient-to-br from-gray-50 to-white">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6 bg-gradient-to-br from-gray-50 to-white">
         {messages.length === 1 && (
-          <div className="text-center py-8 slide-up">
-            <div className="inline-block p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mb-4">
-              <Sparkles className="w-8 h-8 text-white" />
+          <div className="text-center py-6 sm:py-8 slide-up">
+            <div className="inline-block p-3 sm:p-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mb-3 sm:mb-4">
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
-            <h3 className="text-lg font-bold text-gray-800 mb-2">
+            <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-2 px-4">
               Bắt đầu cuộc trò chuyện với {character.name}
             </h3>
-            <p className="text-sm text-gray-600 max-w-md mx-auto">
+            <p className="text-xs sm:text-sm text-gray-600 max-w-md mx-auto px-4 mb-4 sm:mb-6">
               Hãy hỏi về lịch sử, chiến thuật, triết lý hay bất cứ điều gì bạn muốn biết
             </p>
-            <div className="mt-6 flex flex-wrap gap-2 justify-center">
+            <div className="mt-4 sm:mt-6 flex flex-wrap gap-2 justify-center px-4">
               {[
                 "Xin chào! Cuộc đời ngài như thế nào?",
                 "Ngài có lời khuyên gì cho thế hệ trẻ?",
@@ -191,7 +191,7 @@ function Chat() {
                   key={idx}
                   onClick={() => handleSendMessage(suggestion)}
                   disabled={loading}
-                  className="text-xs px-3 py-2 bg-white border-2 border-gray-200 rounded-full hover:border-primary hover:text-primary transition-colors disabled:opacity-50"
+                  className="text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 bg-white border-2 border-gray-200 rounded-full hover:border-primary hover:text-primary transition-colors disabled:opacity-50 hover:scale-105 transform duration-200"
                 >
                   {suggestion}
                 </button>

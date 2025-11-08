@@ -10,10 +10,19 @@ const api = axios.create({
 });
 
 /**
- * Get all characters
+ * Get all characters or filtered characters
+ * @param {Object} params - Query parameters {search, category, gender, dynasty}
  */
-export const getCharacters = async () => {
-  const response = await api.get('/characters');
+export const getCharacters = async (params = {}) => {
+  const response = await api.get('/characters', { params });
+  return response.data;
+};
+
+/**
+ * Get filter options (categories, dynasties, genders)
+ */
+export const getFilterOptions = async () => {
+  const response = await api.get('/characters/filters');
   return response.data.data;
 };
 
