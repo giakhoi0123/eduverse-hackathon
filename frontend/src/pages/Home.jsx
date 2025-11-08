@@ -27,12 +27,6 @@ function Home() {
     dynasty !== 'all';
 
   useEffect(() => {
-    if (!hasActiveFilters) {
-      setCharacters([]);
-      setLoading(false);
-      return;
-    }
-
     let isCancelled = false;
 
     const fetchCharacters = async () => {
@@ -68,7 +62,7 @@ function Home() {
     return () => {
       isCancelled = true;
     };
-  }, [hasActiveFilters, searchQuery, category, gender, dynasty]);
+  }, [searchQuery, category, gender, dynasty]);
 
 
   const handleCharacterSelect = (characterId) => {
@@ -149,24 +143,14 @@ function Home() {
             <h3 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3 gradient-text">
               {hasActiveFilters
                 ? `Kết quả (${characters.length})`
-                : 'Nhập từ khóa hoặc chọn bộ lọc để bắt đầu'}
+                : `Tất cả nhân vật (${characters.length})`}
             </h3>
             <p className="text-sm sm:text-base text-gray-600 px-4">
-              {hasActiveFilters ? 'Click vào nhân vật để bắt đầu cuộc trò chuyện' : 'Hệ thống hiển thị nhân vật sau khi bạn tìm kiếm hoặc áp dụng bộ lọc'}
+              Click vào nhân vật để bắt đầu cuộc trò chuyện
             </p>
           </div>
           
-          {!hasActiveFilters ? (
-            <div className="text-center py-16 sm:py-20">
-              <div className="inline-block p-6 bg-blue-50 rounded-full mb-4">
-                <Sparkles className="w-12 h-12 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-700 mb-2">Bắt đầu hành trình</h3>
-              <p className="text-gray-600 max-w-md mx-auto">
-                Sử dụng thanh tìm kiếm hoặc lựa chọn bộ lọc để khám phá hơn {totalCharacters} nhân vật lịch sử Việt Nam.
-              </p>
-            </div>
-          ) : loading ? (
+          {loading ? (
             <div className="text-center py-16 sm:py-20">
               <div className="inline-block relative">
                 <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-4 border-primary border-t-transparent"></div>
