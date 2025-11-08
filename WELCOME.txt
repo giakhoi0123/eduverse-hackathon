@@ -1,0 +1,223 @@
+
+   ______ _    ___      __                   
+  / ____/| |  / (_)  __/ /___  __________  ___
+ / __/  / | / / / | / / / __ \/ ___/ ___/ / _ \
+/ /___   | V / /| |/ / / /_/ / /  (__  ) /  __/
+\____/   |___/_/ |___/_/\____/_/  /____/  \___/ 
+                                                
+    AI Avatar Lịch Sử Việt Nam - Hackathon 2025
+
+================================================================================
+
+🎉 CHÚC MỪNG! DỰ ÁN ĐÃ ĐƯỢC TẠO THÀNH CÔNG!
+
+================================================================================
+
+📂 TỔNG QUAN DỰ ÁN
+------------------
+✅ Tên dự án: EduVerse
+✅ Mục đích: Trò chuyện với nhân vật lịch sử Việt Nam bằng AI
+✅ Công nghệ: React + Node.js + OpenAI GPT + Text-to-Speech
+✅ Team: 3 người
+✅ Thời gian: 1-2 ngày hackathon
+
+📊 THỐNG KÊ
+-----------
+📝 Tổng số files: 33 files
+💻 Code files: 22 files
+📚 Documentation: 8 files
+🎭 Characters: 4 nhân vật lịch sử
+
+🏗️ CẤU TRÚC DỰ ÁN
+-------------------
+EduVerse/
+├── 📚 Documentation (8 files)
+│   ├── ⭐ START_HERE.md          👈 ĐỌC ĐẦU TIÊN!
+│   ├── 📖 README.md              - Tổng quan
+│   ├── 🚀 QUICKSTART.md          - Hướng dẫn setup
+│   ├── 👥 TEAM_TASKS.md          - Phân công công việc
+│   ├── 🌿 GIT_WORKFLOW.md        - Quy trình Git
+│   ├── 🎤 DEMO_SCRIPT.md         - Script demo
+│   ├── ✅ TODO.md                - Checklist
+│   └── 📊 PROJECT_SUMMARY.md    - Tổng kết
+
+├── 🔧 Backend (Node.js + Express)
+│   ├── server.js                - Main server
+│   ├── routes/
+│   │   ├── chat.js             - Chat API
+│   │   └── characters.js       - Characters API
+│   ├── utils/
+│   │   ├── openai.js           - OpenAI GPT integration
+│   │   ├── tts.js              - Text-to-Speech
+│   │   ├── storage.js          - Data storage
+│   │   └── characters.js       - 4 nhân vật lịch sử
+│   ├── audio/                  - Generated audio files
+│   └── data/                   - Conversation history
+
+└── 🎨 Frontend (React + Vite)
+    ├── src/
+    │   ├── pages/
+    │   │   ├── Home.jsx        - Trang chủ
+    │   │   └── Chat.jsx        - Giao diện chat
+    │   ├── components/
+    │   │   ├── CharacterCard.jsx
+    │   │   ├── ChatBubble.jsx
+    │   │   ├── Avatar.jsx
+    │   │   └── MessageInput.jsx
+    │   └── services/
+    │       └── api.js          - API integration
+    └── index.html
+
+🎭 NHÂN VẬT LỊCH SỬ
+--------------------
+1. 🗡️  Trần Hưng Đạo    - Đại Tướng Quân (thế kỷ 13)
+2. ⚔️  Hai Bà Trưng      - Nữ Tướng Quân (thế kỷ 1)
+3. 📜 Nguyễn Trãi       - Danh Nho, Chiến Lược Gia (thế kỷ 15)
+4. 🏰 Lý Thường Kiệt    - Thái Úy Quốc Công (thế kỷ 11)
+
+🚀 BẮT ĐẦU NGAY (3 BƯỚC)
+--------------------------
+
+BƯỚC 1: CÀI ĐẶT
+```bash
+# Backend
+cd backend
+npm install
+cp .env.example .env
+# ⚠️ Thêm OPENAI_API_KEY vào file .env
+
+# Frontend (terminal mới)
+cd frontend
+npm install
+```
+
+BƯỚC 2: LẤY OPENAI API KEY
+1. 🔗 https://platform.openai.com/api-keys
+2. 🔑 Tạo new API key
+3. 📝 Copy vào backend/.env
+
+BƯỚC 3: CHẠY DỰ ÁN
+```bash
+# Terminal 1 - Backend
+cd backend
+npm run dev
+# ✅ Server: http://localhost:5000
+
+# Terminal 2 - Frontend
+cd frontend
+npm run dev
+# ✅ App: http://localhost:5173
+```
+
+🎯 PHÂN CÔNG NHANH
+------------------
+👤 Người 1: BACKEND
+   - OpenAI API integration ⚡ PRIORITY
+   - Text-to-Speech
+   - Testing endpoints
+
+👤 Người 2: FRONTEND
+   - UI/UX design & styling 🎨
+   - Components
+   - Responsive design
+
+👤 Người 3: INTEGRATION
+   - Connect FE ↔️ BE
+   - Audio playback 🔊
+   - End-to-end testing
+
+📋 CHECKLIST QUAN TRỌNG
+------------------------
+Setup:
+[ ] Node.js installed (v18+)
+[ ] npm installed
+[ ] Git initialized ✅
+[ ] OpenAI API key ready
+[ ] Terminal ready
+
+Before Demo:
+[ ] Backend running (port 5000)
+[ ] Frontend running (port 5173)
+[ ] Tested 2+ characters
+[ ] Audio working
+[ ] Demo script prepared
+
+🎤 DEMO FLOW (5-7 phút)
+------------------------
+1. Intro (30s) - Giới thiệu vấn đề & giải pháp
+2. Homepage (1min) - Show UI và characters
+3. Chat Demo (3min) - Trò chuyện với Trần Hưng Đạo
+4. Features (1min) - Highlight tech & features
+5. Q&A (variable) - Trả lời câu hỏi
+
+💡 TIPS THÀNH CÔNG
+-------------------
+✅ Đọc START_HERE.md trước
+✅ Communicate với team thường xuyên
+✅ Commit code thường xuyên
+✅ Test ngay khi code xong
+✅ Đừng sợ hỏi Google 😄
+✅ DONE > PERFECT
+✅ Have fun! 🎉
+
+🆘 TROUBLESHOOTING
+-------------------
+❌ Port đã dùng:
+   lsof -ti:5000 | xargs kill -9
+
+❌ OpenAI error:
+   Check API key in .env
+   Check credits: platform.openai.com/account/billing
+
+❌ Module not found:
+   rm -rf node_modules package-lock.json
+   npm install
+
+📞 TÀI LIỆU THAM KHẢO
+---------------------
+🔗 OpenAI: https://platform.openai.com/docs
+🔗 React: https://react.dev
+🔗 Vite: https://vitejs.dev
+🔗 TailwindCSS: https://tailwindcss.com
+
+🎯 MỤC TIÊU
+-----------
+MUST HAVE (Tối thiểu):
+✅ Chat với AI hoạt động
+✅ Audio phát được
+✅ UI đẹp và responsive
+
+SHOULD HAVE (Nên có):
+⏳ 4 characters hoạt động tốt
+⏳ Error handling
+⏳ Conversation history
+
+NICE TO HAVE (Tốt hơn):
+⏳ Animations
+⏳ Voice input
+⏳ Share feature
+
+⏱️ TIMELINE ĐỀ XUẤT
+--------------------
+Day 1 - Morning (4h):   Setup + Basic features
+Day 1 - Afternoon (4h): Integration + Testing
+Day 1 - Evening (2h):   Polish + Bug fixes
+
+Day 2 - Morning (3h):   Final testing + Optimization
+Day 2 - Afternoon (3h): Demo prep + Practice
+
+================================================================================
+
+🎊 SẴN SÀNG BẮT ĐẦU!
+
+📖 Bước tiếp theo: Đọc START_HERE.md
+💻 Sau đó: Setup và bắt đầu code!
+🎯 Mục tiêu: Build something AWESOME!
+
+Good luck team! You got this! 💪🚀
+
+================================================================================
+
+Made with ❤️ for Hackathon 2025
+Last updated: 2025-01-08
+
