@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, Sparkles, BookOpen, Lightbulb, Trophy, Map, RefreshCw } from 'lucide-react';
+import API_URL from '../config';
 
 function EduVerseAssistant() {
   const [isOpen, setIsOpen] = useState(false);
@@ -56,7 +57,7 @@ function EduVerseAssistant() {
       }));
 
       // Call assistant API
-      const response = await fetch('/api/assistant/chat', {
+      const response = await fetch(`${API_URL}/api/assistant/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
