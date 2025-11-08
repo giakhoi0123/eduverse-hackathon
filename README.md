@@ -208,9 +208,9 @@ lsof -ti:5173 | xargs kill -9
 
 ## 📞 Liên hệ Team
 
-- **Backend**: [Tên người 1]
-- **Frontend**: [Tên người 2]
-- **Integration**: [Tên người 3]
+- **Backend**: [Võ Minh Tri]
+- **Frontend**: [Phạm Gia Khôi]
+- **Integration**: [Trần Kỳ Quang]
 
 ---
 
