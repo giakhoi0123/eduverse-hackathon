@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, BookOpen, Users } from 'lucide-react';
+import { Sparkles, BookOpen, Users, ChevronLeft, ChevronRight, X, MessageCircle, Gamepad2, Volume2, Search } from 'lucide-react';
 import { getCharacters } from '../services/api';
 import CharacterCard from '../components/CharacterCard';
 import SearchBar from '../components/SearchBar';
@@ -12,12 +12,17 @@ const DEFAULT_FILTERS = {
   dynasty: 'all'
 };
 
+const ITEMS_PER_PAGE = 12;
+
 function Home() {
   const [characters, setCharacters] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({ ...DEFAULT_FILTERS });
   const [totalCharacters, setTotalCharacters] = useState(100);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showLearnModal, setShowLearnModal] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
   const navigate = useNavigate();
 
   const { category, gender, dynasty } = filters;
@@ -84,13 +89,19 @@ function Home() {
               </h1>
             </div>
             <div className="hidden md:flex items-center space-x-6 text-sm text-gray-600">
-              <div className="flex items-center space-x-2 hover:text-primary transition-colors cursor-pointer">
-                <BookOpen className="w-4 h-4" />
-                <span>Học Lịch Sử</span>
+              <div 
+                onClick={() => setShowLearnModal(true)}
+                className="flex items-center space-x-2 hover:text-primary transition-colors cursor-pointer group"
+              >
+                <BookOpen className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="font-medium">Học Lịch Sử</span>
               </div>
-              <div className="flex items-center space-x-2 hover:text-secondary transition-colors cursor-pointer">
-                <Users className="w-4 h-4" />
-                <span>AI Tương Tác</span>
+              <div 
+                onClick={() => setShowAIModal(true)}
+                className="flex items-center space-x-2 hover:text-secondary transition-colors cursor-pointer group"
+              >
+                <Users className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="font-medium">AI Tương Tác</span>
               </div>
             </div>
           </div>
@@ -176,20 +187,104 @@ function Home() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {characters.map((character, index) => (
-                <div 
-                  key={character.id}
-                  className="slide-up"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <CharacterCard
-                    character={character}
-                    onSelect={handleCharacterSelect}
-                  />
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                {characters
+                  .slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+                  .map((character, index) => (
+                    <div 
+                      key={character.id}
+                      className="slide-up"
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      <CharacterCard
+                        character={character}
+                        onSelect={handleCharacterSelect}
+                      />
+                    </div>
+                  ))
+                }
+              </div>
+
+              {/* Pagination */}
+              {characters.length > ITEMS_PER_PAGE && (
+                <div className="mt-8 flex items-center justify-center space-x-2">
+                  <button
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className="p-2 rounded-lg border-2 border-gray-200 hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  
+                  <div className="flex items-center space-x-1">
+                    {(() => {
+                      const totalPages = Math.ceil(characters.length / ITEMS_PER_PAGE);
+                      const pages = [];
+                      
+                      if (totalPages <= 7) {
+                        // Show all pages if 7 or less
+                        for (let i = 1; i <= totalPages; i++) {
+                          pages.push(i);
+                        }
+                      } else {
+                        // Always show first page
+                        pages.push(1);
+                        
+                        if (currentPage > 3) {
+                          pages.push('...');
+                        }
+                        
+                        // Show pages around current page
+                        const start = Math.max(2, currentPage - 1);
+                        const end = Math.min(totalPages - 1, currentPage + 1);
+                        
+                        for (let i = start; i <= end; i++) {
+                          if (!pages.includes(i)) {
+                            pages.push(i);
+                          }
+                        }
+                        
+                        if (currentPage < totalPages - 2) {
+                          pages.push('...');
+                        }
+                        
+                        // Always show last page
+                        if (!pages.includes(totalPages)) {
+                          pages.push(totalPages);
+                        }
+                      }
+                      
+                      return pages.map((page, idx) => 
+                        page === '...' ? (
+                          <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">...</span>
+                        ) : (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className={`w-10 h-10 rounded-lg font-semibold transition-all ${
+                              currentPage === page
+                                ? 'bg-primary text-white shadow-lg scale-110'
+                                : 'border-2 border-gray-200 hover:border-primary hover:scale-105'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        )
+                      );
+                    })()}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage(p => Math.min(Math.ceil(characters.length / ITEMS_PER_PAGE), p + 1))}
+                    disabled={currentPage === Math.ceil(characters.length / ITEMS_PER_PAGE)}
+                    className="p-2 rounded-lg border-2 border-gray-200 hover:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
 
@@ -235,6 +330,243 @@ function Home() {
           </p>
         </div>
       </footer>
+
+      {/* Learn History Modal */}
+      {showLearnModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative animate-scale-in">
+            <button
+              onClick={() => setShowLearnModal(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-3xl font-bold gradient-text mb-2">Học Lịch Sử</h2>
+              <p className="text-gray-600">Cách học lịch sử hiệu quả với EduVerse</p>
+            </div>
+
+            <div className="space-y-6">
+              {/* Step 1 */}
+              <div className="flex gap-4 p-4 bg-blue-50 rounded-xl border-l-4 border-blue-500">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
+                    1
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                    <Search className="w-5 h-5 text-blue-600" />
+                    Tìm kiếm nhân vật
+                  </h3>
+                  <p className="text-gray-700 text-sm">
+                    Sử dụng thanh tìm kiếm để tìm nhân vật lịch sử bạn quan tâm. Bạn có thể tìm theo tên, 
+                    thời kỳ, triều đại hoặc lĩnh vực.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="flex gap-4 p-4 bg-purple-50 rounded-xl border-l-4 border-purple-500">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-purple-500 text-white rounded-full flex items-center justify-center font-bold">
+                    2
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                    <MessageCircle className="w-5 h-5 text-purple-600" />
+                    Trò chuyện tương tác
+                  </h3>
+                  <p className="text-gray-700 text-sm">
+                    Click vào nhân vật để bắt đầu trò chuyện. AI sẽ nhập vai và trả lời mọi câu hỏi của bạn 
+                    với kiến thức lịch sử chính xác và văn phong đặc trưng.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex gap-4 p-4 bg-green-50 rounded-xl border-l-4 border-green-500">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center font-bold">
+                    3
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                    <Gamepad2 className="w-5 h-5 text-green-600" />
+                    Chơi trắc nghiệm
+                  </h3>
+                  <p className="text-gray-700 text-sm">
+                    Sau khi trò chuyện, click nút 🎮 để chơi trắc nghiệm 10 câu hỏi. 
+                    Kiểm tra kiến thức và xem lại đáp án để học sâu hơn!
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div className="flex gap-4 p-4 bg-yellow-50 rounded-xl border-l-4 border-yellow-500">
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-yellow-500 text-white rounded-full flex items-center justify-center font-bold">
+                    4
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
+                    <Volume2 className="w-5 h-5 text-yellow-600" />
+                    Nghe giọng nói
+                  </h3>
+                  <p className="text-gray-700 text-sm">
+                    Mỗi câu trả lời đều có giọng đọc tiếng Việt tự nhiên. 
+                    Nghe để hiểu rõ hơn và ghi nhớ kiến thức tốt hơn!
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={() => setShowLearnModal(false)}
+                className="flex-1 btn btn-primary"
+              >
+                Bắt đầu học ngay! 🚀
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* AI Interaction Modal */}
+      {showAIModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative animate-scale-in">
+            <button
+              onClick={() => setShowAIModal(false)}
+              className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="text-3xl font-bold gradient-text mb-2">AI Tương Tác</h2>
+              <p className="text-gray-600">Công nghệ AI tiên tiến cho trải nghiệm học tập tốt nhất</p>
+            </div>
+
+            <div className="space-y-6">
+              {/* Feature 1 */}
+              <div className="p-5 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border-2 border-blue-100">
+                <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-blue-600" />
+                  AI Nhập Vai Chính Xác
+                </h3>
+                <ul className="space-y-2 text-gray-700 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-600 font-bold mt-0.5">✓</span>
+                    <span>AI được huấn luyện với dữ liệu lịch sử Việt Nam chính xác</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-600 font-bold mt-0.5">✓</span>
+                    <span>Nhập vai với văn phong và tính cách của từng nhân vật</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-blue-600 font-bold mt-0.5">✓</span>
+                    <span>Trả lời câu hỏi dựa trên kiến thức lịch sử có căn cứ</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Feature 2 */}
+              <div className="p-5 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border-2 border-purple-100">
+                <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5 text-purple-600" />
+                  Trò Chuyện Tự Nhiên
+                </h3>
+                <ul className="space-y-2 text-gray-700 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-purple-600 font-bold mt-0.5">✓</span>
+                    <span>Hỏi bất kỳ câu hỏi nào về lịch sử, triết lý, cuộc đời</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-purple-600 font-bold mt-0.5">✓</span>
+                    <span>AI hiểu ngữ cảnh và cho câu trả lời phù hợp</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-purple-600 font-bold mt-0.5">✓</span>
+                    <span>Trò chuyện liên tục, AI nhớ nội dung đã nói</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Feature 3 */}
+              <div className="p-5 bg-gradient-to-br from-green-50 to-teal-50 rounded-xl border-2 border-green-100">
+                <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+                  <Volume2 className="w-5 h-5 text-green-600" />
+                  Giọng Nói AI Tiếng Việt
+                </h3>
+                <ul className="space-y-2 text-gray-700 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 font-bold mt-0.5">✓</span>
+                    <span>Text-to-Speech chất lượng cao với giọng Việt tự nhiên</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 font-bold mt-0.5">✓</span>
+                    <span>Phát âm chuẩn, dễ nghe và dễ hiểu</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 font-bold mt-0.5">✓</span>
+                    <span>Có thể dừng/phát lại theo ý muốn</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Feature 4 */}
+              <div className="p-5 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border-2 border-yellow-100">
+                <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+                  <Gamepad2 className="w-5 h-5 text-yellow-600" />
+                  Trắc Nghiệm Thông Minh
+                </h3>
+                <ul className="space-y-2 text-gray-700 text-sm">
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-600 font-bold mt-0.5">✓</span>
+                    <span>10 câu hỏi đa dạng, từ dễ đến khó</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-600 font-bold mt-0.5">✓</span>
+                    <span>Câu hỏi được tạo động dựa trên thông tin nhân vật</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-600 font-bold mt-0.5">✓</span>
+                    <span>Xem lại đáp án và giải thích chi tiết sau khi hoàn thành</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+              <p className="text-sm text-gray-700">
+                <span className="font-bold text-blue-700">💡 Mẹo:</span> Hãy đặt câu hỏi cụ thể và chi tiết để nhận được 
+                câu trả lời sâu sắc nhất từ AI!
+              </p>
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={() => setShowAIModal(false)}
+                className="flex-1 btn btn-secondary"
+              >
+                Trải nghiệm ngay! ✨
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

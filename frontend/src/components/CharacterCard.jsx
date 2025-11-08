@@ -98,25 +98,6 @@ function CharacterCard({ character, onSelect }) {
         </div>
       </div>
 
-      {/* Preview Quote Bubble - Hidden on mobile, shown on hover for desktop */}
-      {character.previewQuote && (
-        <div className="hidden md:block absolute -top-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:-translate-y-3 transition-all duration-300 z-50 pointer-events-none w-full px-4">
-          <div className="relative bg-white rounded-xl shadow-2xl px-4 py-3 border-2 mx-auto" style={{ 
-            borderColor: character.color,
-            maxWidth: '300px'
-          }}>
-            <p className="text-xs font-medium text-gray-700 text-center leading-relaxed">
-              "{character.previewQuote}"
-            </p>
-            {/* Speech bubble tail */}
-            <div 
-              className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent"
-              style={{ borderTopColor: character.color }}
-            ></div>
-          </div>
-        </div>
-      )}
-
       {/* Info */}
       <div className="relative z-10">
         <h3 className="font-bold text-xl mb-1.5 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text transition-all duration-300"
@@ -129,15 +110,6 @@ function CharacterCard({ character, onSelect }) {
         <p className="text-sm text-gray-700 mb-4 line-clamp-3 leading-relaxed">
           {character.description}
         </p>
-
-        {/* Preview Quote on Mobile */}
-        {character.previewQuote && (
-          <div className="md:hidden mb-3 p-3 bg-gray-50 rounded-lg border-l-4" style={{ borderColor: character.color }}>
-            <p className="text-xs italic text-gray-600">
-              "{character.previewQuote}"
-            </p>
-          </div>
-        )}
 
         {/* CTA Button with Gradient Animation */}
         <button 

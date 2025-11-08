@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Send, Volume2, Loader2, Sparkles, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Send, Volume2, VolumeX, Loader2, Sparkles, RefreshCw, Gamepad2 } from 'lucide-react';
 import { getCharacterById, sendMessage } from '../services/api';
 import ChatBubble from '../components/ChatBubble';
 import Avatar from '../components/Avatar';
 import MessageInput from '../components/MessageInput';
+import HistoryQuiz from '../components/HistoryQuiz';
 
 function Chat() {
   const { characterId } = useParams();
@@ -14,6 +15,7 @@ function Chat() {
   const [conversationId, setConversationId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [playingAudio, setPlayingAudio] = useState(null);
+  const [showQuiz, setShowQuiz] = useState(false);
   const messagesEndRef = useRef(null);
   const audioRef = useRef(null);
 
@@ -105,6 +107,14 @@ function Chat() {
     }
   };
 
+  const stopAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setPlayingAudio(null);
+    }
+  };
+
   const handleAudioEnded = () => {
     setPlayingAudio(null);
   };
@@ -141,30 +151,61 @@ function Chat() {
 
         <div className="flex items-center space-x-2 sm:space-x-3">
           {playingAudio && (
-            <div className="hidden sm:flex items-center space-x-2 text-primary bg-blue-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
-              <div className="flex space-x-0.5">
-                <div className="w-1 h-3 sm:h-4 bg-primary rounded-full animate-pulse"></div>
-                <div className="w-1 h-3 sm:h-4 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-1 h-3 sm:h-4 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+            <>
+              <div className="hidden sm:flex items-center space-x-2 text-primary bg-blue-50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
+                <div className="flex space-x-0.5">
+                  <div className="w-1 h-3 sm:h-4 bg-primary rounded-full animate-pulse"></div>
+                  <div className="w-1 h-3 sm:h-4 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-1 h-3 sm:h-4 bg-primary rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                </div>
+                <span className="text-xs sm:text-sm font-medium hidden sm:inline">Đang phát giọng nói</span>
               </div>
-              <span className="text-xs sm:text-sm font-medium hidden sm:inline">Đang phát</span>
-            </div>
+              
+              <button
+                onClick={stopAudio}
+                className="p-1.5 sm:p-2 bg-red-100 hover:bg-red-200 rounded-lg transition-colors group"
+                title="Dừng phát giọng nói"
+              >
+                <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
+              </button>
+            </>
           )}
           
-          <button
-            onClick={() => {
-              setMessages([{
-                type: 'ai',
-                text: `Xin chào! Ta là ${character.name}. Hãy hỏi ta bất cứ điều gì về lịch sử, triết lý hay cuộc đời của ta.`,
-                timestamp: new Date().toISOString()
-              }]);
-              setConversationId(`conv_${Date.now()}_${characterId}`);
-            }}
-            className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors group"
-            title="Cuộc trò chuyện mới"
-          >
-            <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 group-hover:text-primary group-hover:rotate-180 transition-all duration-300" />
-          </button>
+          {/* Quiz Game Button */}
+          <div className="relative group">
+            <button
+              onClick={() => setShowQuiz(true)}
+              className="p-1.5 sm:p-2 bg-purple-50 hover:bg-purple-100 rounded-lg transition-all group-hover:scale-105"
+              title="Chơi trắc nghiệm lịch sử"
+            >
+              <Gamepad2 className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 group-hover:scale-110 transition-transform" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-purple-600 rounded-full animate-pulse"></span>
+            </button>
+            <span className="hidden sm:block absolute bottom-full right-0 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              Trắc nghiệm 🎮
+            </span>
+          </div>
+          
+          {/* New Conversation Button */}
+          <div className="relative group">
+            <button
+              onClick={() => {
+                setMessages([{
+                  type: 'ai',
+                  text: `Xin chào! Ta là ${character.name}. Hãy hỏi ta bất cứ điều gì về lịch sử, triết lý hay cuộc đời của ta.`,
+                  timestamp: new Date().toISOString()
+                }]);
+                setConversationId(`conv_${Date.now()}_${characterId}`);
+              }}
+              className="p-1.5 sm:p-2 bg-gray-50 hover:bg-gray-100 rounded-lg transition-all group-hover:scale-105"
+              title="Bắt đầu cuộc trò chuyện mới"
+            >
+              <RefreshCw className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 group-hover:text-primary group-hover:rotate-180 transition-all duration-300" />
+            </button>
+            <span className="hidden sm:block absolute bottom-full right-0 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              Làm mới chat ✨
+            </span>
+          </div>
         </div>
       </header>
 
@@ -235,6 +276,14 @@ function Chat() {
         onEnded={handleAudioEnded}
         className="hidden"
       />
+
+      {/* History Quiz Modal */}
+      {showQuiz && (
+        <HistoryQuiz
+          character={character}
+          onClose={() => setShowQuiz(false)}
+        />
+      )}
     </div>
   );
 }

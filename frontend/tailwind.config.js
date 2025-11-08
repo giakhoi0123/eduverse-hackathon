@@ -14,6 +14,15 @@ export default {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
+      scale: {
+        '98': '0.98',
+        '102': '1.02',
+      },
+      animation: {
+        'fadeIn': 'fadeIn 0.3s ease-in',
+        'shake': 'shake 0.5s ease-in-out',
+        'scale-in': 'scaleIn 0.3s ease-out',
+      },
     },
   },
   plugins: [],

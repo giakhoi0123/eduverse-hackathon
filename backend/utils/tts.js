@@ -18,16 +18,22 @@ if (!fs.existsSync(AUDIO_DIR)) {
  * Generate speech audio from text using Google TTS
  * @param {string} text - Text to convert to speech
  * @param {string} characterId - Character ID (for voice customization)
+ * @param {string} gender - Character gender ('male' or 'female')
  * @returns {Promise<string>} URL to the generated audio file
  */
-export async function generateSpeech(text, characterId) {
+export async function generateSpeech(text, characterId, gender = 'male') {
   return new Promise((resolve, reject) => {
     try {
       // Generate unique filename
       const filename = `${characterId}_${uuidv4()}.mp3`;
       const filepath = path.join(AUDIO_DIR, filename);
 
-      // Create gTTS instance (Vietnamese language)
+      // Note: gtts library doesn't support voice selection
+      // For production, consider using: 
+      // - Google Cloud Text-to-Speech API (supports male/female voices)
+      // - Azure Cognitive Services
+      // - Amazon Polly
+      // Current implementation uses default Vietnamese voice
       const speech = new gtts(text, 'vi');
 
       // Save audio file
@@ -40,7 +46,7 @@ export async function generateSpeech(text, characterId) {
 
         // Return URL path
         const audioUrl = `/audio/${filename}`;
-        console.log('✅ Audio generated:', audioUrl);
+        console.log(`✅ Audio generated (${gender}):`, audioUrl);
         resolve(audioUrl);
       });
 

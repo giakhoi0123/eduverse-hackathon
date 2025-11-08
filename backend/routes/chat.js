@@ -28,8 +28,14 @@ router.post('/message', async (req, res) => {
     // Generate AI response
     const aiResponse = await generateResponse(message, characterId, history);
 
-    // Generate audio from response
-    const audioUrl = await generateSpeech(aiResponse.text, characterId);
+    // Get character data to determine gender for voice
+    const { getCharacters } = await import('../utils/characters.js');
+    const allCharacters = getCharacters();
+    const character = allCharacters.find(c => c.id === characterId);
+    const gender = character?.gender || 'male';
+
+    // Generate audio from response with appropriate gender voice
+    const audioUrl = await generateSpeech(aiResponse.text, characterId, gender);
 
     // Save conversation
     const savedConversation = await saveConversation({
