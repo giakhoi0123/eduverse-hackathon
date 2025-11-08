@@ -8,6 +8,16 @@ function SearchBar({ value, onChange, placeholder = "Tìm kiếm nhân vật..."
     onChange('');
   };
 
+  const handleBlur = () => {
+    // Delay để onClick trên suggestion có thể hoạt động trước
+    setTimeout(() => setIsFocused(false), 200);
+  };
+
+  const handleSuggestionClick = (hint) => {
+    onChange(hint);
+    setIsFocused(false);
+  };
+
   return (
     <div className={`relative transition-all duration-300 ${isFocused ? 'scale-105' : ''}`}>
       <div className="relative">
@@ -20,7 +30,7 @@ function SearchBar({ value, onChange, placeholder = "Tìm kiếm nhân vật..."
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onBlur={handleBlur}
           placeholder={placeholder}
           className={`w-full pl-10 pr-10 py-3 rounded-xl border-2 transition-all duration-200 ${
             isFocused 
@@ -43,12 +53,15 @@ function SearchBar({ value, onChange, placeholder = "Tìm kiếm nhân vật..."
       {isFocused && !value && (
         <div className="absolute top-full mt-2 left-0 right-0 bg-white rounded-lg shadow-lg border border-gray-200 p-3 z-10 animate-fadeIn">
           <p className="text-xs text-gray-600 mb-2">💡 Gợi ý tìm kiếm:</p>
-          <div className="flex flex-wrap gap-1">
-            {['Trần Hưng Đạo', 'Quang Trung', 'Thế kỷ 15'].map((hint, idx) => (
+          <div className="flex flex-wrap gap-2">
+            {['Trần Hưng Đạo', 'Quang Trung', 'Lê Lợi', 'Nguyễn Du', 'Thế kỷ 13', 'Nhà Lý'].map((hint, idx) => (
               <button
                 key={idx}
-                onClick={() => onChange(hint)}
-                className="text-xs px-2 py-1 bg-gray-100 rounded-full hover:bg-primary hover:text-white transition-colors"
+                onMouseDown={(e) => {
+                  e.preventDefault(); // Ngăn blur event
+                  handleSuggestionClick(hint);
+                }}
+                className="text-xs px-3 py-1.5 bg-gray-100 rounded-full hover:bg-primary hover:text-white transition-colors cursor-pointer"
               >
                 {hint}
               </button>
