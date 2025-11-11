@@ -67,11 +67,16 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 EduVerse Backend running on http://localhost:${PORT}`);
-  console.log(`📝 Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(
-    `🔗 Frontend URL: ${process.env.FRONTEND_URL || "http://localhost:5173"}`
-  );
-});
+// Start server (only if not in serverless environment)
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 EduVerse Backend running on http://localhost:${PORT}`);
+    console.log(`📝 Environment: ${process.env.NODE_ENV || "development"}`);
+    console.log(
+      `🔗 Frontend URL: ${process.env.FRONTEND_URL || "http://localhost:5173"}`
+    );
+  });
+}
+
+// Export for Vercel serverless
+export default app;
