@@ -58,4 +58,19 @@ export const deleteConversation = async (conversationId) => {
   return response.data;
 };
 
+/**
+ * Generate AI-powered quiz questions for a character
+ * @param {string} characterId - Character ID
+ * @param {number} numQuestions - Number of questions (default: 10)
+ * @param {string} difficulty - 'easy', 'medium', 'hard', or 'mixed' (default: 'mixed')
+ */
+export const generateQuiz = async (characterId, numQuestions = 10, difficulty = 'mixed') => {
+  const response = await api.post('/quiz/generate', {
+    characterId,
+    numQuestions,
+    difficulty
+  });
+  return response.data.data;
+};
+
 export default api;

@@ -6,6 +6,7 @@ import cors from "cors";
 import chatRoutes from "./routes/chat.js";
 import characterRoutes from "./routes/characters.js";
 import assistantRoutes from "./routes/assistant.js";
+import quizRoutes from "./routes/quiz.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -43,6 +44,7 @@ app.use("/img", express.static("../img"));
 app.use("/api/chat", chatRoutes);
 app.use("/api/characters", characterRoutes);
 app.use("/api/assistant", assistantRoutes);
+app.use("/api/quiz", quizRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

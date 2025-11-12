@@ -67,6 +67,36 @@ Gửi tin nhắn
 }
 ```
 
+### POST /api/quiz/generate ⭐ NEW
+Tạo câu hỏi trắc nghiệm bằng AI
+```json
+{
+  "characterId": "tran-hung-dao",
+  "numQuestions": 10,
+  "difficulty": "mixed"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "questions": [
+      {
+        "question": "Trần Hưng Đạo sinh sống vào thời kỳ nào?",
+        "options": ["Thế kỷ 13", "Thế kỷ 14", "Thế kỷ 12", "Thế kỷ 15"],
+        "correctAnswer": 0,
+        "explanation": "Trần Hưng Đạo sống vào thế kỷ 13, thời nhà Trần",
+        "difficulty": "easy"
+      }
+    ],
+    "characterId": "tran-hung-dao",
+    "totalQuestions": 10
+  }
+}
+```
+
 ## 🔑 Environment Variables
 ```
 OPENAI_API_KEY=your_key_here
