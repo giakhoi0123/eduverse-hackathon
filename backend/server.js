@@ -7,6 +7,8 @@ import chatRoutes from "./routes/chat.js";
 import characterRoutes from "./routes/characters.js";
 import assistantRoutes from "./routes/assistant.js";
 import quizRoutes from "./routes/quiz.js";
+import timelineRoutes from "./routes/timeline.js";
+import profileRoutes from "./routes/profiles.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -45,6 +47,8 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/characters", characterRoutes);
 app.use("/api/assistant", assistantRoutes);
 app.use("/api/quiz", quizRoutes);
+app.use("/api/timeline", timelineRoutes);
+app.use("/api/profiles", profileRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

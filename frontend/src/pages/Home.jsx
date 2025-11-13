@@ -11,6 +11,7 @@ import {
   Gamepad2,
   Volume2,
   Search,
+  Calendar,
 } from "lucide-react";
 import { getCharacters } from "../services/api";
 import CharacterCard from "../components/CharacterCard";
@@ -100,6 +101,20 @@ function Home() {
             </div>
             <div className="hidden md:flex items-center space-x-6 text-sm text-gray-600">
               <div
+                onClick={() => navigate('/profile')}
+                className="flex items-center space-x-2 hover:text-green-600 transition-colors cursor-pointer group"
+              >
+                <Users className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="font-medium">Hồ Sơ Của Tôi</span>
+              </div>
+              <div
+                onClick={() => navigate('/timeline')}
+                className="flex items-center space-x-2 hover:text-purple-600 transition-colors cursor-pointer group"
+              >
+                <Calendar className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="font-medium">Timeline Lịch Sử</span>
+              </div>
+              <div
                 onClick={() => setShowLearnModal(true)}
                 className="flex items-center space-x-2 hover:text-primary transition-colors cursor-pointer group"
               >
@@ -110,7 +125,7 @@ function Home() {
                 onClick={() => setShowAIModal(true)}
                 className="flex items-center space-x-2 hover:text-secondary transition-colors cursor-pointer group"
               >
-                <Users className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <Sparkles className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 <span className="font-medium">AI Tương Tác</span>
               </div>
             </div>

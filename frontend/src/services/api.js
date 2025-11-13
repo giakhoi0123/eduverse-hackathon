@@ -59,6 +59,14 @@ export const deleteConversation = async (conversationId) => {
 };
 
 /**
+ * Get all conversations
+ */
+export const getAllConversations = async () => {
+  const response = await api.get('/chat/conversations');
+  return response.data.data;
+};
+
+/**
  * Generate AI-powered quiz questions for a character
  * @param {string} characterId - Character ID
  * @param {number} numQuestions - Number of questions (default: 10)

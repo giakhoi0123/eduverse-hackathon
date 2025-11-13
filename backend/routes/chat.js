@@ -96,16 +96,64 @@ router.get('/history/:conversationId', async (req, res) => {
 router.delete('/history/:conversationId', async (req, res) => {
   try {
     const { conversationId } = req.params;
-    // TODO: Implement delete logic
+    const { deleteConversation } = await import('../utils/storage.js');
+    const deleted = deleteConversation(conversationId);
     
-    res.json({
-      success: true,
-      message: 'Conversation deleted successfully'
-    });
+    if (deleted) {
+      res.json({
+        success: true,
+        message: 'Conversation deleted successfully'
+      });
+    } else {
+      res.status(404).json({
+        error: 'Conversation not found'
+      });
+    }
   } catch (error) {
     console.error('Delete error:', error);
     res.status(500).json({ 
       error: 'Failed to delete conversation',
+      details: error.message 
+    });
+  }
+});
+
+/**
+ * GET /api/chat/conversations
+ * Get all conversations with metadata
+ */
+router.get('/conversations', async (req, res) => {
+  try {
+    const { getAllConversations } = await import('../utils/storage.js');
+    const { getCharacterById } = await import('../utils/characters.js');
+    
+    const conversations = getAllConversations();
+    
+    // Enrich with character information
+    const enrichedConversations = conversations.map(conv => {
+      const character = getCharacterById(conv.characterId);
+      return {
+        ...conv,
+        characterName: character?.name || 'Unknown',
+        characterAvatar: character?.avatar || null,
+        characterEra: character?.era || null
+      };
+    });
+    
+    // Sort by most recent first
+    enrichedConversations.sort((a, b) => 
+      new Date(b.updatedAt) - new Date(a.updatedAt)
+    );
+    
+    res.json({
+      success: true,
+      data: enrichedConversations,
+      total: enrichedConversations.length
+    });
+  } catch (error) {
+    console.error('Get conversations error:', error);
+    res.status(500).json({ 
+      error: 'Failed to retrieve conversations',
       details: error.message 
     });
   }

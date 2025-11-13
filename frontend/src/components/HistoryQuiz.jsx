@@ -8,6 +8,7 @@ import {
   Loader,
 } from "lucide-react";
 import { generateQuiz } from "../services/api";
+import { logQuizActivity } from "../utils/activity-tracker";
 
 function HistoryQuiz({ character, onClose }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -87,6 +88,12 @@ function HistoryQuiz({ character, onClose }) {
         }, 300); // 300ms for fade out
       } else {
         setGameCompleted(true);
+        
+        // Log quiz activity
+        const correctAnswers = answers.filter(a => a.isCorrect).length + (isCorrect ? 1 : 0);
+        const totalQuestions = questions.length;
+        const scorePercent = Math.round((correctAnswers / totalQuestions) * 100);
+        logQuizActivity(scorePercent, correctAnswers, totalQuestions, character.name || 'general');
       }
     }, 2500); // 2.5s to show result
   };

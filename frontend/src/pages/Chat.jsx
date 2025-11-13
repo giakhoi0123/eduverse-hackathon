@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Send, Volume2, VolumeX, Loader2, Sparkles, RefreshCw, Gamepad2 } from 'lucide-react';
-import { getCharacterById, sendMessage } from '../services/api';
+import { ArrowLeft, Send, Volume2, VolumeX, Loader2, Sparkles, RefreshCw, Gamepad2, History } from 'lucide-react';
+import { getCharacterById, sendMessage, getConversationHistory } from '../services/api';
 import ChatBubble from '../components/ChatBubble';
 import Avatar from '../components/Avatar';
 import MessageInput from '../components/MessageInput';
 import HistoryQuiz from '../components/HistoryQuiz';
+import ConversationHistory from '../components/ConversationHistory';
+import { logChatActivity } from '../utils/activity-tracker';
 
 function Chat() {
   const { characterId } = useParams();
@@ -16,18 +18,38 @@ function Chat() {
   const [loading, setLoading] = useState(false);
   const [playingAudio, setPlayingAudio] = useState(null);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const messagesEndRef = useRef(null);
   const audioRef = useRef(null);
+  const chatStartTime = useRef(Date.now());
 
   useEffect(() => {
     loadCharacter();
     // Generate conversation ID
     setConversationId(`conv_${Date.now()}_${characterId}`);
+    chatStartTime.current = Date.now();
   }, [characterId]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Track chat activity when leaving
+  useEffect(() => {
+    return () => {
+      if (character) {
+        const duration = Math.floor((Date.now() - chatStartTime.current) / 1000);
+        if (duration > 10) { // Only log if chat lasted > 10 seconds
+          logChatActivity(
+            characterId,
+            duration,
+            character.era || 'Unknown',
+            character.tags || []
+          );
+        }
+      }
+    };
+  }, [character, characterId]);
 
   const loadCharacter = async () => {
     try {
@@ -119,6 +141,43 @@ function Chat() {
     setPlayingAudio(null);
   };
 
+  const handleLoadConversation = async (conv) => {
+    try {
+      // Load conversation messages
+      const history = await getConversationHistory(conv.id);
+      
+      // Convert history to messages format
+      const loadedMessages = [
+        {
+          type: 'ai',
+          text: `Xin chào! Ta là ${character.name}. Đây là cuộc trò chuyện trước đó của chúng ta.`,
+          timestamp: conv.createdAt
+        }
+      ];
+      
+      history.forEach(msg => {
+        loadedMessages.push({
+          type: 'user',
+          text: msg.userMessage,
+          timestamp: msg.timestamp
+        });
+        loadedMessages.push({
+          type: 'ai',
+          text: msg.aiResponse,
+          audioUrl: msg.audioUrl,
+          timestamp: msg.timestamp
+        });
+      });
+      
+      setMessages(loadedMessages);
+      setConversationId(conv.id);
+      setShowHistory(false);
+    } catch (error) {
+      console.error('Failed to load conversation:', error);
+      alert('Không thể tải cuộc trò chuyện');
+    }
+  };
+
   if (!character) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
@@ -171,6 +230,20 @@ function Chat() {
             </>
           )}
           
+          {/* History Button */}
+          <div className="relative group">
+            <button
+              onClick={() => setShowHistory(true)}
+              className="p-1.5 sm:p-2 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all group-hover:scale-105"
+              title="Xem lịch sử trò chuyện"
+            >
+              <History className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 group-hover:scale-110 transition-transform" />
+            </button>
+            <span className="hidden sm:block absolute bottom-full right-0 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              Lịch sử 📚
+            </span>
+          </div>
+
           {/* Quiz Game Button */}
           <div className="relative group">
             <button
@@ -276,6 +349,14 @@ function Chat() {
         onEnded={handleAudioEnded}
         className="hidden"
       />
+
+      {/* Conversation History Modal */}
+      {showHistory && (
+        <ConversationHistory
+          onClose={() => setShowHistory(false)}
+          onLoadConversation={handleLoadConversation}
+        />
+      )}
 
       {/* History Quiz Modal */}
       {showQuiz && (
